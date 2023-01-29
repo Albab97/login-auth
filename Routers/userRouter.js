@@ -1,5 +1,6 @@
 const express=require('express');
 const userModel = require('../Models/userModel');
+const cookieParser = require('cookie-parser');
 
 const userRouter = express.Router();
 
@@ -10,7 +11,7 @@ userRouter
 .patch(updateUser)
 .delete(deleteUser);
 
-userRouter.route("/:id").get(getUserById);
+// userRouter.route("/:id").get(getUserById);
 
 let users=[
     {

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const emailValidator = require('email-validator');
+const bcrypt = require('bcrypt');
 
 const db_link='mongodb+srv://albabahmed97:1tc6eJcBATRlxoyW@cluster0.tosuya4.mongodb.net/?retryWrites=true&w=majority'
 mongoose.connect(db_link)
@@ -50,6 +51,14 @@ const userSchema=mongoose.Schema({
 userSchema.pre('save',function(){
     console.log('before saving in db');
     this.confirmPassword=undefined;
+});
+
+// Hashing - using bcrypt
+userSchema.pre('save',async function(){
+    let salt=await bcrypt.genSalt();
+    let hashedString=await bcrypt.hash(this.password,salt);
+    this.password = hashedString;
+    // console.log(hashedString);
 });
 
 //Model
