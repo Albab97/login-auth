@@ -1,5 +1,7 @@
 const express=require('express');
 const userModel = require('../Models/userModel');
+const jwt=require('jsonwebtoken');
+const JWT_KEY='ggkjghwliuyw675298';
 
 const authRouter = express.Router();
 
@@ -48,22 +50,26 @@ async function loginUser(req,res){
     try{
         if(user){
             if(user.password == dataObj.password){
-                res.json({
+                //JWT
+                let uid = user['_id']; //payload
+                let token = jwt.sign({payload:uid},JWT_KEY);
+                res.cookie('login',token,{httpOnly:true});
+                return res.json({
                     message:"user successfully logged in",
                     data:user
                 });
             }else{
-                res.json({
+                return res.json({
                     message:"Incorrect password"
                 });
             }
         }else{
-            res.json({
+            return res.json({
                 message:"user doesn't exist"
             });
         }
     }catch(err){
-        res.json({
+        return res.json({
             message:err
         });
     }

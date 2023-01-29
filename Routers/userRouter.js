@@ -1,12 +1,13 @@
 const express=require('express');
 const userModel = require('../Models/userModel');
-const cookieParser = require('cookie-parser');
+const protectRoute = require('./authHelper');
+const {getUsers,postUser,updateUser,deleteUser,getUserById}=require('../controller/userController.js');
 
 const userRouter = express.Router();
 
 userRouter
 .route("/")
-.get(getUsers)
+.get(protectRoute,getUsers)
 .post(postUser)
 .patch(updateUser)
 .delete(deleteUser);
@@ -36,51 +37,5 @@ let users=[
 // app.delete('/user',); 
 
 //Mini-app
-
-async function getUsers(req,res){ 
-    // console.log(req.query);
-    let allUsers = await userModel.find();
-    res.json({
-        message:'list of all users',
-        data:allUsers
-    });
-}
-function postUser(req,res){
-    console.log(req.body);
-    users=req.body;
-    res.json({
-        message:"data received successfully."
-    });
-};
-function updateUser(req,res){
-    console.log('req.body ->',req.body);
-    let dataToBeUpdated = req.body;
-    for(key in dataToBeUpdated){
-        users[key]=dataToBeUpdated[key];
-    }
-    res.json({
-        message:"data patched successfully."
-    });
-};
-function deleteUser(req,res){
-    users={};
-    res.json({
-        message:"data has been deleted"
-    });
-};
-function getUserById(req,res){
-    console.log(req.params.id);
-    let paramId = req.params.id;
-    let obj={};
-    for(let i=0;i<users.length;i++){
-        if(users[i]['id']==paramId){
-            obj=users[i];
-        }
-    }
-    res.json({
-        message:"req received",
-        data:obj
-    });
-};
 
 module.exports = userRouter;
